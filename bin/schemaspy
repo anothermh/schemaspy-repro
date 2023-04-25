@@ -1,0 +1,16 @@
+#!/bin/sh -a
+
+echo "Starting schemaspy for ${SCHEMASPY_VERSION:-snapshot}..."
+
+rm -rf ./docs
+
+docker-compose --file docker-compose.yaml up \
+  --abort-on-container-exit \
+  --exit-code-from schemaspy \
+  --always-recreate-deps \
+  --build \
+  --force-recreate \
+  --pull always \
+  --quiet-pull \
+  --remove-orphans \
+  --renew-anon-volumes

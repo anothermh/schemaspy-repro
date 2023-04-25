@@ -1,0 +1,68 @@
+version: "2.1"
+
+services:
+  postgres:
+    image: postgres:14-alpine
+    logging:
+      driver: none
+    environment:
+      POSTGRES_USER: foo
+      POSTGRES_DB: foo
+      POSTGRES_HOST_AUTH_METHOD: trust
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "pg_isready",
+          "-q",
+          "-d",
+          "foo",
+          "-U",
+          "foo"
+        ]
+      interval: 3s
+      timeout: 2s
+      retries: 10
+  reset_db:
+    build: .
+    depends_on:
+      postgres:
+        condition: service_healthy
+    links:
+      - postgres:postgres
+    environment:
+      DATABASE_URL: postgres://foo:@postgres:5432/foo_schemaspy
+      SHADOW_DATABASE_URL: postgres://foo:@postgres:5432/foo_schemaspy_shadow
+      ROOT_DATABASE_URL: postgres://foo:@postgres:5432/postgres
+    command: [ reset-and-watch ]
+  schemaspy:
+    image: schemaspy/schemaspy:${SCHEMASPY_VERSION:-snapshot}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    links:
+      - postgres:postgres
+    volumes:
+      - ./docs:/output
+    command:
+      [
+        "-t",
+        "pgsql",
+        "-db",
+        "foo_schemaspy",
+        "-host",
+        "postgres",
+        "-port",
+        "5432",
+        "-u",
+        "foo",
+        "-nopages",
+        "-hq",
+        "-imageformat",
+        "svg",
+        "-font",
+        "HelveticaNeue",
+        "-renderer",
+        ":cairo",
+        "-rails"
+      ]

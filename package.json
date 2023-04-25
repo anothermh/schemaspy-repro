@@ -1,0 +1,21 @@
+{
+  "name": "schemaspy-repro",
+  "packageManager": "yarn@3.5.0",
+  "private": true,
+  "engines": {
+    "node": "16"
+  },
+  "dependencies": {
+    "dotenv-cli": "^7.2.1",
+    "graphile-migrate": "^1.4.1"
+  },
+  "devDependencies": {
+    "husky": "^8.0.3"
+  },
+  "scripts": {
+    "generate-env": "bash -c 'export BASE_URL=\"postgres://$(whoami):@localhost:5432\" && echo \"DATABASE_URL=${BASE_URL}/foo\" > .env && echo \"SHADOW_DATABASE_URL=${BASE_URL}/foo_shadow\" >> .env && echo \"ROOT_DATABASE_URL=${BASE_URL}/postgres\" >> .env'",
+    "reset-and-watch": "yarn reset && yarn watch",
+    "reset": "yarn dotenv -- yarn graphile-migrate reset --erase",
+    "watch": "yarn dotenv -- yarn graphile-migrate watch"
+  }
+}

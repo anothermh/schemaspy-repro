@@ -1,0 +1,10 @@
+# dotenv environment variables file
+.env
+.env.test
+
+# macOS
+.DS_Store
+
+# Yarn PnP - https://yarnpkg.com/getting-started/qa#which-files-should-be-gitignored
+node_modules
+.yarn/install-state.gz
